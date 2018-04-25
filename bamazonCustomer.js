@@ -1,6 +1,4 @@
-// import { EBUSY } from "constants";
-
-var mysql = require("mysql");
+var mysql = require("mysql2");
 var inquirer = require("inquirer");
 var Table = require("easy-table");
 
@@ -41,18 +39,36 @@ function prompt(){
             message: "How many would like to buy?" 
             }
         ])
+
+    // }
         .then(function(answer){
             var item;
-            for (var i=1; i<results.length; i++){
+            for (var i=0; i<result.length; i++){
                 if (results[i].id === answer.whichId){
-                    item = results[i];
+                    item = result[i];
                 }
             }
-            if (results.stock_quantity < answer.quantity) {
-                console.log("insufficient quantity");
-            }
+            if (result.stock_quantity >= parseInt(answer.quantity)) {
+                var newQuantity = result.stock_quantity - answer.quantity
+                connection.query(
+                    "UPDATE product SET ? WHERE ?",
+                [
+                    {
+                    stock_quantity:  newQuantity
+                    },
+                    {
+                    id: item.id
+                    }
+                ],
+                function(error){
+                    if (error) throw error;
+                    var cost = answer.quantity*item.price
+                    console.log("Purchase successful! Your cost is "+cost);
+                }
+            )
         }
-}};
+})
+}
 
 // app should tehm prompt users with two messages:
     // 1. ask the ID of the product they want to purchase
