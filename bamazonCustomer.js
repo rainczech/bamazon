@@ -43,30 +43,21 @@ function prompt(){
     // }
         .then(function(answer){
             var item;
-            for (var i=0; i<result.length; i++){
-                if (results[i].id === answer.whichId){
-                    item = result[i];
-                }
-            }
-            if (result.stock_quantity >= parseInt(answer.quantity)) {
-                var newQuantity = result.stock_quantity - answer.quantity
                 connection.query(
-                    "UPDATE product SET ? WHERE ?",
+                    "UPDATE products SET ? WHERE ?",
                 [
                     {
-                    stock_quantity:  newQuantity
+                    stock_quantity:  answer.quantity
                     },
                     {
-                    id: item.id
+                    id: answer.whichId
                     }
-                ],
-                function(error){
-                    if (error) throw error;
-                    var cost = answer.quantity*item.price
-                    console.log("Purchase successful! Your cost is "+cost);
+                ],function(err,results){
+                    console.log(results)
                 }
+                
             )
-        }
+        
 })
 }
 
