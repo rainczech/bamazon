@@ -39,33 +39,34 @@ function prompt(){
             message: "How many would like to buy?" 
             }
         ])
-
-    // }
         .then(function(answer){
-            let newQuantity; 
             connection.query(  
                 "SELECT stock_quantity FROM products WHERE id =" + answer.whichId, function (err, res) {
                     if (err) throw err;
-                    newQuantity = (res[0].stock_quantity - answer.quantity)
-                    console.log(newQuantity);
-                })
+                    const prodId = answer.whichId;
+                    const newQuantity = (res[0].stock_quantity - answer.quantity)
+                    update();
+                });
+            });
+
+        function update (answer, newQuantity){
                 connection.query(
-                    "UPDATE products SET ? WHERE ?",
+                    "UPDATE products SET ? WHERE ?", function(err, res){
+                        if (err) throw err;
                 [
                     {
                     stock_quantity: newQuantity
                     },
                     {
-                    id: answer.whichId
+                    id: prodId
                     }
                 ],function(err,results){
                     console.log(results)
                 }
-                
-            )
-        
-})
-}
+            }
+            )};
+        };
+
 
 // app should tehm prompt users with two messages:
     // 1. ask the ID of the product they want to purchase
