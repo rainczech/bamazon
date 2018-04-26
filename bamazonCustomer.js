@@ -42,12 +42,18 @@ function prompt(){
 
     // }
         .then(function(answer){
-            var item;
+            let newQuantity; 
+            connection.query(  
+                "SELECT stock_quantity FROM products WHERE id =" + answer.whichId, function (err, res) {
+                    if (err) throw err;
+                    newQuantity = (res[0].stock_quantity - answer.quantity)
+                    console.log(newQuantity);
+                })
                 connection.query(
                     "UPDATE products SET ? WHERE ?",
                 [
                     {
-                    stock_quantity:  answer.quantity
+                    stock_quantity: newQuantity
                     },
                     {
                     id: answer.whichId
