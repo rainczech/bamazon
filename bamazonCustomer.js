@@ -41,17 +41,17 @@ function prompt(){
         ])
         .then(function(answer){
             connection.query(  
-                "SELECT stock_quantity FROM products WHERE id =" + answer.whichId, function (err, res) {
+                "SELECT stock_quantity FROM products WHERE id =?", [answer.whichId], function (err, res) {
                     if (err) throw err;
                     const prodId = answer.whichId;
                     const newQuantity = (res[0].stock_quantity - answer.quantity)
-                    update();
+                    update(newQuantity, prodId);
                 });
             });
 
-        function update (answer, newQuantity){
+        function update (newQuantity, prodID){
                 connection.query(
-                    "UPDATE products SET ? WHERE ?", function(err, res){
+                    "UPDATE products SET stock_quantity =? WHERE item_id = ?", function(err, res){
                         if (err) throw err;
                 [
                     {
@@ -66,13 +66,6 @@ function prompt(){
             }
             )};
         };
-
-
-// app should tehm prompt users with two messages:
-    // 1. ask the ID of the product they want to purchase
-    // 2. how many units they would like to buy
-
-
 
 // app should check if store has enough stuff to sell. if not, order would be prevented from going though and log "insufficient quantity"
 
